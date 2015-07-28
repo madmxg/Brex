@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "replace__APP_NAME__replace",
+  "version": "0.0.1",
+  "description": "replace__APP_DESCRIPTION__replace",
+  "homepage_url": "http://www.localhost.cdn",
+  "web_accessible_resources": ["./*"],
+  "background": {
+    "scripts": ["bg.js"]
+  },
+  "icons": {
+    "128": "img/icon.png"
+  },
+  "permissions": [
+    "<all_urls>", 
+    "unlimitedStorage",
+    "bookmarks",
+    "browsingData",
+    "contextMenus",
+    "downloads",
+    "history",
+    "tabs",
+    "topSites",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "update_url": "http://clients2.google.com/service/update2/crx"
+}
