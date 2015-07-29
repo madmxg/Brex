@@ -41,7 +41,7 @@ gulp.task "webpack:server", (cb)->
     publicPath: "/chrome"
     stats:
       colors: true
-  }).listen 8080, "localhost", (err)->
+  }).listen 8080, "192.168.0.5", (err)->
     if err
       throw new gutil.PluginError "webpack:server", err
 
