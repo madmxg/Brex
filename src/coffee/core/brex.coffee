@@ -2,7 +2,7 @@ $ = require "jquery"
 
 Ctor = require "./constructor.coffee"
 ctor = new Ctor()
-Talker = require "./talker/talker.coffee"
+Talker = require "./api/talker.coffee"
 
 class Brex
   constructor: (app)->
@@ -10,10 +10,11 @@ class Brex
     @host = app.host
     @path = app.path
     @timeout = app.timeout
+    @pid = app.pluginId
 
     @modules = ctor.object()
     @browser = ctor.object require("./browser.coffee")
-    @talker = new Talker("abc")
+    @talker = new Talker @pid
 
   log: ->
     document.write "Hello #{@host}"
@@ -21,8 +22,8 @@ class Brex
   load: ->
     @log()
     @foo()
+    @talker.addListener()
     @modules.noop()
-    @talker.send aaa: 111
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->
     @modules[foo[0]] = ctor.function(foo[1])

@@ -7,10 +7,13 @@ var envPlugin = new webpack.DefinePlugin({
 
 module.exports = {
   context: path.join(__dirname + "/src"),
-  entry: "./coffee/bg/chrome.coffee",
+  entry: {
+    bg: "./coffee/bg/chrome.coffee",
+    cs: "./coffee/cs/chrome.coffee",
+  },
   output: {
     path: path.join(__dirname + "/chrome"),
-    filename: "bg.js"
+    filename: "[name].js"
   },
   module: {
     loaders: [

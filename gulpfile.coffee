@@ -20,7 +20,7 @@ myDevConfig.debug = true
 webpackCompiler = webpack myDevConfig
 
 gulp.task "watch", ->
-  gulp.watch ["./src/coffee/*.coffee"], ["webpack:dev"]
+  gulp.watch ["./src/coffee/**/*.coffee"], ["webpack:dev"]
 
 
 
@@ -41,7 +41,7 @@ gulp.task "webpack:server", (cb)->
     publicPath: "/chrome"
     stats:
       colors: true
-  }).listen 8080, "192.168.0.5", (err)->
+  }).listen 8080, "localhost", (err)->
     if err
       throw new gutil.PluginError "webpack:server", err
 

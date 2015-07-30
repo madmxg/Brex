@@ -51,7 +51,8 @@
 	brex = new Brex({
 	  host: "localhost:8080",
 	  path: "/",
-	  timeout: 60000
+	  timeout: 60000,
+	  pluginId: "plugin1"
 	});
 	
 	brex.load();
@@ -76,9 +77,10 @@
 	    this.host = app.host;
 	    this.path = app.path;
 	    this.timeout = app.timeout;
+	    this.pid = app.pluginId;
 	    this.modules = ctor.object();
-	    this.browser = ctor.object(__webpack_require__(6));
-	    this.talker = new Talker("abc");
+	    this.browser = ctor.object(__webpack_require__(8));
+	    this.talker = new Talker(this.pid);
 	  }
 	
 	  Brex.prototype.log = function() {
@@ -88,10 +90,8 @@
 	  Brex.prototype.load = function() {
 	    this.log();
 	    this.foo();
-	    this.modules.noop();
-	    return this.talker.send({
-	      aaa: 111
-	    });
+	    this.talker.addListener();
+	    return this.modules.noop();
 	  };
 	
 	  Brex.prototype.foo = function(foo) {
@@ -9420,22 +9420,51 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Browser, Talker,
+	var BrowserMsgr, Talker, api,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Browser = __webpack_require__(5);
+	BrowserMsgr = __webpack_require__(5);
+	
+	api = __webpack_require__(6);
 	
 	Talker = (function(superClass) {
 	  extend(Talker, superClass);
 	
-	  function Talker(appId) {
-	    this.appId = appId;
+	  function Talker() {
+	    return Talker.__super__.constructor.apply(this, arguments);
 	  }
+	
+	  Talker.prototype.sendAnswer = function(message, sender, sendResponse) {
+	    var __value;
+	    if (this.appId === sender) {
+	      switch (message.reason) {
+	        case "ping":
+	          console.log("I catch ping msg");
+	          return sendResponse(null, {
+	            msg: "pong"
+	          });
+	        case "storage.set":
+	          api.localStorage.set(message.data.key, message.data.value);
+	          return sendResponse(null);
+	        case "storage.get":
+	          __value = api.localStorage.get(message.data.key);
+	          return sendResponse(null, {
+	            value: __value
+	          });
+	        case "storage.clear":
+	          api.localStorage.clear();
+	          return sendResponse(null);
+	        case "ajax.get":
+	          message.data.success = sendResponse;
+	          return api.ajax.get(message.data);
+	      }
+	    }
+	  };
 	
 	  return Talker;
 	
-	})(Browser);
+	})(BrowserMsgr);
 	
 	module.exports = Talker;
 
@@ -9444,30 +9473,94 @@
 /* 5 */
 /***/ function(module, exports) {
 
-	var ChromeMsg;
+	var ChromeMsgr;
 	
-	ChromeMsg = (function() {
-	  function ChromeMsg() {
-	    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	      return console.log(request);
-	    });
+	ChromeMsgr = (function() {
+	  function ChromeMsgr(appId) {
+	    this.appId = appId;
 	  }
 	
-	  ChromeMsg.prototype.send = function(msg) {
-	    return chrome.runtime.sendMessage(null, msg, function(data) {
-	      return console.log(data);
-	    });
+	  ChromeMsgr.prototype.addListener = function() {
+	    return chrome.runtime.onMessage.addListener((function(_this) {
+	      return function(message, sender, sendResponse) {
+	        return _this.sendAnswer(message, _this.appId, sendResponse);
+	      };
+	    })(this));
 	  };
 	
-	  return ChromeMsg;
+	  ChromeMsgr.prototype.send = function(msg, cb) {
+	    return chrome.runtime.sendMessage(null, msg, null, cb);
+	  };
+	
+	  return ChromeMsgr;
 	
 	})();
 	
-	module.exports = ChromeMsg;
+	module.exports = ChromeMsgr;
 
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {
+	  localStorage: {
+	    set: function(key, value) {
+	      return localStorage[key] = value;
+	    },
+	    get: function(key) {
+	      return localStorage[key];
+	    },
+	    clear: function() {
+	      return localStorage.clear();
+	    }
+	  },
+	  ajax: __webpack_require__(7)
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  get: function(param) {
+	    param.method = "GET";
+	    return this.ajax(param);
+	  },
+	  post: function(param) {
+	    param.method = "POST";
+	    return this.ajax(param);
+	  },
+	  head: function(param) {
+	    param.method = "HEAD";
+	    return this.ajax(param);
+	  },
+	  ajax: function(param) {
+	    var cb, data, headers, method, req, url;
+	    url = param.url;
+	    data = param.data;
+	    method = param.method;
+	    cb = param.success;
+	    headers = param.headers || {};
+	    req = $.ajax({
+	      url: url,
+	      data: data,
+	      headers: headers,
+	      method: method
+	    });
+	    req.done(function(data, textStatus, jqXHR) {
+	      return cb(null, data);
+	    });
+	    return req.fail(function(jqXHR, textStatus, errorThrown) {
+	      return cb(textStatus, jqXHR);
+	    });
+	  }
+	};
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Ctor, ctor;
