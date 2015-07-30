@@ -27,7 +27,6 @@ class Brex
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->
     @modules[foo[0]] = ctor.function(foo[1])
-    console.log @modules, @browser
 
   loadModules: ->
 

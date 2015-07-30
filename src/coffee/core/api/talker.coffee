@@ -8,24 +8,24 @@ class Talker extends BrowserMsgr
       switch message.reason
 
         when "ping"
-          console.log "I catch ping msg"
-          sendResponse null, msg: "pong"
+          sendResponse err: false, value: "pong"
 
         when "storage.set"
           api.localStorage.set message.data.key, message.data.value
-          sendResponse null
+          sendResponse err: false
 
         when "storage.get"
           __value = api.localStorage.get message.data.key
-          sendResponse null, value: __value
+          sendResponse err: false, value: __value
 
         when "storage.clear"
           api.localStorage.clear()
-          sendResponse null
+          sendResponse err: false
 
         when "ajax.get"
-          message.data.success = sendResponse
-          api.ajax.get message.data
+          api.ajax.get message.data, (res)->
+            console.log 111, res
+            sendResponse({err: res.err, value: res})
 
 
 module.exports = Talker

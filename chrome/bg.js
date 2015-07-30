@@ -98,8 +98,7 @@
 	    if (foo == null) {
 	      foo = ["noop", "console.log(\"noop\");"];
 	    }
-	    this.modules[foo[0]] = ctor["function"](foo[1]);
-	    return console.log(this.modules, this.browser);
+	    return this.modules[foo[0]] = ctor["function"](foo[1]);
 	  };
 	
 	  Brex.prototype.loadModules = function() {};
@@ -9440,24 +9439,34 @@
 	    if (this.appId === sender) {
 	      switch (message.reason) {
 	        case "ping":
-	          console.log("I catch ping msg");
-	          return sendResponse(null, {
-	            msg: "pong"
+	          return sendResponse({
+	            err: false,
+	            value: "pong"
 	          });
 	        case "storage.set":
 	          api.localStorage.set(message.data.key, message.data.value);
-	          return sendResponse(null);
+	          return sendResponse({
+	            err: false
+	          });
 	        case "storage.get":
 	          __value = api.localStorage.get(message.data.key);
-	          return sendResponse(null, {
+	          return sendResponse({
+	            err: false,
 	            value: __value
 	          });
 	        case "storage.clear":
 	          api.localStorage.clear();
-	          return sendResponse(null);
+	          return sendResponse({
+	            err: false
+	          });
 	        case "ajax.get":
-	          message.data.success = sendResponse;
-	          return api.ajax.get(message.data);
+	          return api.ajax.get(message.data, function(res) {
+	            console.log(111, res);
+	            return sendResponse({
+	              err: res.err,
+	              value: res
+	            });
+	          });
 	      }
 	    }
 	  };
@@ -9521,27 +9530,30 @@
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var $;
+	
+	$ = __webpack_require__(2);
+	
 	module.exports = {
-	  get: function(param) {
+	  get: function(param, cb) {
 	    param.method = "GET";
-	    return this.ajax(param);
+	    return this.ajax(param, cb);
 	  },
-	  post: function(param) {
+	  post: function(param, cb) {
 	    param.method = "POST";
-	    return this.ajax(param);
+	    return this.ajax(param, cb);
 	  },
-	  head: function(param) {
+	  head: function(param, cb) {
 	    param.method = "HEAD";
-	    return this.ajax(param);
+	    return this.ajax(param, cb);
 	  },
-	  ajax: function(param) {
-	    var cb, data, headers, method, req, url;
+	  ajax: function(param, cb) {
+	    var data, headers, method, req, url;
 	    url = param.url;
-	    data = param.data;
+	    data = param.data || "";
 	    method = param.method;
-	    cb = param.success;
 	    headers = param.headers || {};
 	    req = $.ajax({
 	      url: url,
@@ -9550,10 +9562,16 @@
 	      method: method
 	    });
 	    req.done(function(data, textStatus, jqXHR) {
-	      return cb(null, data);
+	      return cb({
+	        err: false,
+	        value: data
+	      });
 	    });
 	    return req.fail(function(jqXHR, textStatus, errorThrown) {
-	      return cb(textStatus, jqXHR);
+	      return cb({
+	        err: true,
+	        value: textStatus
+	      });
 	    });
 	  }
 	};

@@ -10,10 +10,26 @@ class Crex
     @talker = new Talker @pid
 
   load: ->
-    console.log "crex loaded"
-    @talker.send reason: "ping", (answer)->
-      console.log answer.msg
-    @talker.send {reason: "storage.set", data: {key: "abc#{new Date().valueOf()}", value:"cab"}}, (answer)->
-      console.log answer.msg
+    @talker.send {
+      reason: "ping"
+    }, (res)->
+      return console.log res.err  if res.err
+      console.log res.value
+
+    @talker.send {
+      reason: "storage.set"
+      data:
+        key: "abc#{new Date().valueOf()}"
+        value: "cab"
+    }, (res)->
+      console.log res.err  if res.err
+
+    @talker.send {
+      reason: "ajax.get"
+      data: 
+        url: "http://s.dercoupon.com/config/config.json"
+    }, (res)->
+      debugger
+      console.log res
 
 module.exports = Crex

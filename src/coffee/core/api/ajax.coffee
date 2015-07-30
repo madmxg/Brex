@@ -1,21 +1,22 @@
+$ = require "jquery"
+
 module.exports =
-  get: (param)->
+  get: (param, cb)->
     param.method = "GET"
-    @ajax param
+    @ajax param, cb
 
-  post: (param)->
+  post: (param, cb)->
     param.method = "POST"
-    @ajax param
+    @ajax param, cb
 
-  head: (param)->
+  head: (param, cb)->
     param.method = "HEAD"
-    @ajax param
+    @ajax param, cb
 
-  ajax: (param)->
+  ajax: (param, cb)->
     url = param.url
-    data = param.data
+    data = param.data or ""
     method = param.method
-    cb = param.success
     headers = param.headers or {}
 
     req = $.ajax(
@@ -25,6 +26,6 @@ module.exports =
       method: method
     )
     req.done (data, textStatus, jqXHR)->
-      cb null, data
+      cb err: false, value: data
     req.fail (jqXHR, textStatus, errorThrown)->
-      cb textStatus, jqXHR
+      cb err: true, value: textStatus
