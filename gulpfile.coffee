@@ -26,7 +26,7 @@ gulp.task "watch", ->
 
 gulp.task "copy:extFiles", ->
   gulp.src "./src/chrome/**"
-  .pipe gulp.dest "./chrome"
+  .pipe gulp.dest "./build"
 
 
 gulp.task "webpack:dev", (cb)->
