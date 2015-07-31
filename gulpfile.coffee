@@ -21,7 +21,12 @@ webpackCompiler = webpack myDevConfig
 
 gulp.task "watch", ->
   gulp.watch ["./src/coffee/**/*.coffee"], ["webpack:dev"]
+  gulp.watch ["./src/chrome/manifest.json"], ["copy:extFiles"]
 
+
+gulp.task "copy:extFiles", ->
+  gulp.src "./src/chrome/**"
+  .pipe gulp.dest "./chrome"
 
 
 gulp.task "webpack:dev", (cb)->
@@ -51,10 +56,11 @@ gulp.task "webpack:server", (cb)->
 
 gulp.task "default", (cb)->
   runSequence(
+    "copy:extFiles"
     [
       "webpack:dev"
       "webpack:server"
     ],
-     "watch"
+    "watch"
     cb
   )

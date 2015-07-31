@@ -30,6 +30,6 @@ class Crex
       data:
         url: "http://s.dercoupon.com/config/config.json"
     }, (res)->
-      console.log "CS: ajax.get: #{res.value.toString()}"
+      console.log "CS: ajax.get: #{res.value}"
 
 module.exports = Crex

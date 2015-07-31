@@ -26,5 +26,13 @@ class Talker extends BrowserMsgr
           api.ajax.get message.data, (res)->
             sendResponse err: res.err, value: res.value
 
+        when "ajax.post"
+          api.ajax.post message.data, (res)->
+            sendResponse err: res.err, value: res.value
+
+        when "ajax.ajax"
+          api.ajax.ajax message.data, (res)->
+            sendResponse err: res.err, value: res.value
+
 
 module.exports = Talker
