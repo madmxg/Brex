@@ -42,8 +42,8 @@ gulp.task "webpack:dev", (cb)->
 gulp.task "webpack:server", (cb)->
 
   new WebpackDevServer(webpack(myDevConfig), {
-    contentBase: "#{__dirname}/chrome"
-    publicPath: "/chrome"
+    contentBase: "#{__dirname}/build"
+    publicPath: "/build"
     stats:
       colors: true
   }).listen 8080, "localhost", (err)->

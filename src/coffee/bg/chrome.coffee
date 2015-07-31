@@ -5,4 +5,6 @@ brex = new Brex
   path: "/"
   timeout: 60000
   pluginId: "plugin1"
-brex.load()
+
+if chrome.runtime.onMessage
+  brex.load()

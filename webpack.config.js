@@ -12,7 +12,7 @@ module.exports = {
     cs: "./coffee/cs/chrome.coffee",
   },
   output: {
-    path: path.join(__dirname + "/chrome"),
+    path: path.join(__dirname + "/build"),
     filename: "[name].js"
   },
   module: {
