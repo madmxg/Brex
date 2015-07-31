@@ -14,7 +14,7 @@ class Crex
       reason: "ping"
     }, (res)->
       return console.log res.err  if res.err
-      console.log res.value
+      console.log "CS: ping: #{res.value}"
 
     @talker.send {
       reason: "storage.set"
@@ -23,13 +23,13 @@ class Crex
         value: "cab"
     }, (res)->
       console.log res.err  if res.err
+      console.log "CS: storage.set: #{res.value}"
 
     @talker.send {
       reason: "ajax.get"
-      data: 
+      data:
         url: "http://s.dercoupon.com/config/config.json"
     }, (res)->
-      debugger
-      console.log res
+      console.log "CS: ajax.get: #{res.value.toString()}"
 
 module.exports = Crex

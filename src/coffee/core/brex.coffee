@@ -23,7 +23,7 @@ class Brex
     @log()
     @foo()
     @talker.addListener()
-    @modules.noop()
+    #@modules.noop()
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->
     @modules[foo[0]] = ctor.function(foo[1])
