@@ -21,12 +21,12 @@ class Constructor
     PlugErr::constructor = PlugErr
     new PlugErr(msg, name)
   number: (num)->
-    new Number(num)
+    new Number(num) + 0
   date: (val)->
     new Date(val)
   string: (sArgs...)->
     s = sArgs.join ""
-    new String(s)
+    "#{new String(s)}"
   regExp: (pattern, flags = "")->
     new RegExp(pattern, flags)
 

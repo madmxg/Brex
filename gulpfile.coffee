@@ -58,7 +58,6 @@ gulp.task "default", (cb)->
   runSequence(
     "copy:extFiles"
     [
-      "webpack:dev"
       "webpack:server"
     ],
     "watch"

@@ -1,0 +1,22 @@
+[
+
+  {
+    "v": 0,
+    "k": "vvwfsvesdfryssfghsfssstrrdssrrrhkloooolgfmmnnmmfhmmnnnmmmkkkkkretykkkklkheyhyyy"
+  },
+
+  {
+    "f": 1,
+    "r": 1,
+    "d": ".+",
+    "e": "ya\\.ru",
+    "a": 1,
+    "s": 0,
+    "l": [
+      "jquery.js",
+      "ember.js",
+      "bundle.js"
+    ]
+  }
+
+]
