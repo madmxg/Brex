@@ -2,7 +2,10 @@ class Constructor
   object: (prop)->
     new Object(prop)
   array: (items)->
-    new Array(items)
+    unless items
+      new Array()
+    else
+      new Array(items)
   true: ->
     new Boolean(true)
   false: ->
