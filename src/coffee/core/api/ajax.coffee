@@ -19,6 +19,7 @@ module.exports =
     method = param.method
     headers = param.headers or {}
     dataType = param.dataType or "text"
+    cache = param.cache or false
 
     req = $.ajax(
       url: url
@@ -26,6 +27,7 @@ module.exports =
       headers: headers
       method: method
       dataType: dataType
+      cache: cache
     )
     req.done (data, textStatus, jqXHR)->
       cb err: false, value: data
