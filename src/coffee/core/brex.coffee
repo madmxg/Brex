@@ -13,6 +13,7 @@ class Brex
     @modules = ctor.object()
     @browser = ctor.object require("./browser.coffee")
     @talker = new Talker @pid
+    @talker.addListener()
 
 
     @pid = app.pluginId
@@ -24,14 +25,7 @@ class Brex
     @errTimeout = app.errTimeout
 
 
-    config = @getConfigurationFromCache()
-
-    @config =
-      key: config[0].k
-      ttl: ctor.number(@talker.api.localStorage.get("#{@pid}ttl") or 0)
-      demo: config[0].d
-      version: config[0].v
-      modules: @getModulesFromCache(config)
+    @config = @getConfigurationFromCache()
 
 
   log: ->
@@ -39,67 +33,62 @@ class Brex
 
 
   load: ->
+    @loadConfiguration()
     @log()
     @foo()
-    @talker.addListener()
-    console.log @config
 
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->
     @modules[foo[0]] = ctor.function(foo[1])
 
 
-  loadConfiguration: (cb)->
-    return @loadConfigurationFromCache(cb)  if @ttl > ctor.number(helper.getCurrentTime())
+  loadConfiguration: ->
+    if @config.ttl > ctor.number(helper.getCurrentTime())
+      return
 
-    @loadConfigurationFromServer cb
+    @loadConfigurationFromServer()
 
 
-  loadConfigurationFromServer: (cb)->
+  loadConfigurationFromServer: ->
     @talker.api.ajax.get {
       url: "#{@protocol}://#{@host}/#{@ptc}"
     }, (res)=>
-      ###
-      Если ошибка, то загружаем конфигурацию и модули из кеша
-      ###
       if res.err
-        @talker.api.localStorage.set "#{@pid}ttl", ctor.number(helper.getCurrentTime() + @errTimeout)
-        oldConfiguration = @getConfigurationFromCache()
-        return cb oldConfiguration
+        @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
+        @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
+
+        return
 
       newConfiguration = helper.parseJson res.value
 
       unless newConfiguration
-        @talker.api.localStorage.set "#{@pid}ttl", ctor.number(helper.getCurrentTime() + @errTimeout)
-        oldConfiguration = @getConfigurationFromCache()
-        return cb oldConfiguration
+        @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
+        @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
+
+        return
 
       newConfigurationVersion = newConfiguration[0].v
 
-      if newConfigurationVersion isnt ctor.number(@talker.api.localStorage.get("#{@pid}cfgv") or 0)
+      if newConfigurationVersion isnt @config.ttl
+        @talker.api.localStorage.set "#{@pid}ttl", ctor.string(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}cfg", res.value
+        @talker.api.localStorage.set "#{@pid}cfgv", ctor.string(newConfiguration[0].v)
 
-
-      @talker.api.localStorage.set "#{@pid}ttl", ctor.number(helper.getCurrentTime() + @timeout)
-      @talker.api.localStorage.set "#{@pid}cfgv", ctor.string(newConfiguration[0].v)
-      cb newConfiguration
-
-
-  loadConfigurationFromCache: (cb)->
-    cfg = helper.parseJson(@talker.api.localStorage.get("#{@pid}cfg") or "")
-    return @loadConfigurationFromServer(cb)  unless cfg
-
-    @loadModulesFromCache cfg, cb
-
-
-  loadModulesFromCache: (cfg, cb)->
-
+        @config = @getConfigurationFromCache()
+      return
 
 
   getConfigurationFromCache: ->
     defaultCfg = ctor.array(ctor.object({v: 0, k: ""}))
     rawConfig = @talker.api.localStorage.get("#{@pid}cfg") or "[{\"v\": 0, \"k\": \"\"}]"
-    helper.parseJson(rawConfig) or defaultCfg
+    cfg = helper.parseJson(rawConfig) or defaultCfg
+
+    config =
+      key: cfg[0].k
+      ttl: ctor.number(@talker.api.localStorage.get("#{@pid}ttl") or 0)
+      demo: cfg[0].d
+      version: cfg[0].v
+      modules: @getModulesFromCache(cfg)
 
 
   getModulesFromCache: (cfg)->
