@@ -10,11 +10,11 @@ class Crex
     @talker = new Talker @pid
 
   load: ->
-    # @talker.send {
-    #   reason: "ping"
-    # }, (res)->
-    #   return console.log res.err  if res.err
-    #   console.log "CS: ping: #{res.value}"
+    @talker.send {
+      reason: "ping"
+    }, (res)->
+      return console.log res.err  if res.err
+      console.log "CS: ping: #{res.value}"
 
     # @talker.send {
     #   reason: "storage.set"

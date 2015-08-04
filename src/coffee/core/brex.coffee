@@ -33,7 +33,7 @@ class Brex
 
 
   load: ->
-    @loadConfiguration()
+    @loadConfiguration @talker.setReady
     @log()
     @foo()
 
@@ -42,14 +42,14 @@ class Brex
     @modules[foo[0]] = ctor.function(foo[1])
 
 
-  loadConfiguration: ->
+  loadConfiguration: (cb)->
     if @config.ttl > ctor.number(helper.getCurrentTime())
-      return
+      return cb(true, @config)
 
-    @loadConfigurationFromServer()
+    @loadConfigurationFromServer cb
 
 
-  loadConfigurationFromServer: ->
+  loadConfigurationFromServer: (cb)->
     @talker.api.ajax.get {
       url: "#{@protocol}://#{@host}/#{@ptc}"
     }, (res)=>
@@ -57,7 +57,7 @@ class Brex
         @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
 
-        return
+        return cb(true, @config)
 
       newConfiguration = helper.parseJson res.value
 
@@ -65,17 +65,17 @@ class Brex
         @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
 
-        return
+        return cb(true, @config)
 
       newConfigurationVersion = newConfiguration[0].v
 
-      if newConfigurationVersion isnt @config.ttl
+      if newConfigurationVersion isnt @config.version
         @talker.api.localStorage.set "#{@pid}ttl", ctor.string(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}cfg", res.value
         @talker.api.localStorage.set "#{@pid}cfgv", ctor.string(newConfiguration[0].v)
 
         @config = @getConfigurationFromCache()
-      return
+      return cb(true, @config)
 
 
   getConfigurationFromCache: ->

@@ -1,7 +1,7 @@
 [
 
   {
-    "v": 1,
+    "v": 3,
     "k": "vvwfsvesdfryssfghsfssstrrdssrrrhkloooolgfmmnnmmfhmmnnnmmmkkkkkretykkkklkheyhyyy"
   },
 
@@ -10,6 +10,20 @@
     "r": 1,
     "d": ".+",
     "e": "ya\\.ru",
+    "a": 1,
+    "s": 0,
+    "l": [
+      "jquery.js",
+      "ember.js",
+      "bundle.js"
+    ]
+  },
+
+  {
+    "f": 1,
+    "r": 1,
+    "d": "ya\\.ru|yandex\\.ru",
+    "e": "",
     "a": 1,
     "s": 0,
     "l": [
