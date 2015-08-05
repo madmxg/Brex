@@ -16,13 +16,15 @@ class Talker extends BrowserMsgr
     msg.isFrame = window isnt top
     super msg, cb
 
-  setReady: (@ready, @cfg)->
-    console.log @ready
-    console.log @cfg
+  setReady: (ready, cfg)->
+    @ready = ready
+    @cfg = cfg
 
   sendAnswer: (message, sender, sendResponse)->
     console.log message
-    console.log sender
+    console.log @cfg
+    console.log @ready
+
     if @appId is sender
       switch message.reason
 
@@ -60,10 +62,33 @@ class Talker extends BrowserMsgr
           modulesOnStart = ctor.array()
           modulesOnEnd = ctor.array()
           for module in @cfg.modules
-            if (ctor.regExp(module[0].d).test(message.host)) and
-            (not ctor.regExp(module[0].e).test(message.url)) and
-            (ctor.boolean(module[0].f) is @message.isFrame) #TODO: fix me
-              return sendResponse err: true
+            if (ctor.regExp(module[0].h).test(message.host)) and
+            (not ctor.regExp(module[0].e).test(message.url))
+              if message.isFrame and
+              module[0].f in ctor.array(1, 2)
+                if module[0].r is 0
+                  modulesOnStart.push {
+                    i: module[0].i
+                    s: module[1]
+                  }
+                else
+                  modulesOnEnd.push {
+                    i: module[0].i
+                    s: module[1]
+                  }
+              else
+                if module[0].f is 0
+                  if module[0].r is 0
+                    modulesOnStart.push {
+                      i: module[0].i
+                      s: module[1]
+                    }
+                  else
+                    modulesOnEnd.push {
+                      i: module[0].i
+                      s: module[1]
+                    }
+          return sendResponse err: false, value: ctor.array(modulesOnStart, modulesOnEnd)
 
 
 

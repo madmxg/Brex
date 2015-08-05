@@ -1,19 +1,18 @@
 [
 
   {
-    "v": 3,
+    "v": 4,
     "k": "vvwfsvesdfryssfghsfssstrrdssrrrhkloooolgfmmnnmmfhmmnnnmmmkkkkkretykkkklkheyhyyy"
   },
 
   {
     "f": 1,
     "r": 1,
-    "d": ".+",
+    "h": ".+",
     "e": "ya\\.ru",
-    "a": 1,
-    "s": 0,
+    "i": 1,
     "l": [
-      "jquery.js",
+      "http://code.jquery.com/jquery-2.1.4.min.js",
       "ember.js",
       "bundle.js"
     ]
@@ -22,14 +21,13 @@
   {
     "f": 1,
     "r": 1,
-    "d": "ya\\.ru|yandex\\.ru",
+    "h": "ya\\.ru|yandex\\.ru",
     "e": "",
-    "a": 1,
-    "s": 0,
+    "i": 2,
     "l": [
-      "jquery.js",
-      "ember.js",
-      "bundle.js"
+      "dfkgjj.js",
+      "ggg.js",
+      "fff.js"
     ]
   }
 

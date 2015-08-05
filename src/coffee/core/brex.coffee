@@ -1,4 +1,5 @@
 $ = require "jquery"
+async = require "async"
 
 Ctor = require "./constructor.coffee"
 ctor = new Ctor()
@@ -21,11 +22,12 @@ class Brex
     @host = app.host
     @path = app.path
     @ptc = app.pathToConfig
+    @ptm = app.pathToModule
     @timeout = app.timeout
     @errTimeout = app.errTimeout
 
 
-    @config = @getConfigurationFromCache()
+    @config = @getConfigurationFromCache(true)
 
 
   log: ->
@@ -33,9 +35,14 @@ class Brex
 
 
   load: ->
-    @loadConfiguration @talker.setReady
+    @loadConfiguration @setReady
     @log()
     @foo()
+
+
+  setReady: (ready = true)=>
+    @talker.ready = ready
+    @talker.cfg = @config
 
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->
@@ -44,8 +51,7 @@ class Brex
 
   loadConfiguration: (cb)->
     if @config.ttl > ctor.number(helper.getCurrentTime())
-      return cb(true, @config)
-
+      return cb()
     @loadConfigurationFromServer cb
 
 
@@ -57,7 +63,7 @@ class Brex
         @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
 
-        return cb(true, @config)
+        return cb()
 
       newConfiguration = helper.parseJson res.value
 
@@ -65,20 +71,21 @@ class Brex
         @config.ttl = ctor.number(helper.getCurrentTime() + @errTimeout)
         @talker.api.localStorage.set "#{@pid}ttl", ctor.string @config.ttl
 
-        return cb(true, @config)
+        return cb()
 
       newConfigurationVersion = newConfiguration[0].v
 
       if newConfigurationVersion isnt @config.version
-        @talker.api.localStorage.set "#{@pid}ttl", ctor.string(helper.getCurrentTime() + @errTimeout)
+        @talker.api.localStorage.set "#{@pid}ttl", ctor.string(helper.getCurrentTime() + @timeout)
         @talker.api.localStorage.set "#{@pid}cfg", res.value
-        @talker.api.localStorage.set "#{@pid}cfgv", ctor.string(newConfiguration[0].v)
 
-        @config = @getConfigurationFromCache()
-      return cb(true, @config)
+        @config = @getConfigurationFromCache(false)
+        return @loadModulesFromServer(newConfiguration, cb)
+
+      return cb()
 
 
-  getConfigurationFromCache: ->
+  getConfigurationFromCache: (gm)->
     defaultCfg = ctor.array(ctor.object({v: 0, k: ""}))
     rawConfig = @talker.api.localStorage.get("#{@pid}cfg") or "[{\"v\": 0, \"k\": \"\"}]"
     cfg = helper.parseJson(rawConfig) or defaultCfg
@@ -86,9 +93,8 @@ class Brex
     config =
       key: cfg[0].k
       ttl: ctor.number(@talker.api.localStorage.get("#{@pid}ttl") or 0)
-      demo: cfg[0].d
       version: cfg[0].v
-      modules: @getModulesFromCache(cfg)
+      modules: if gm then @getModulesFromCache(cfg) else []
 
 
   getModulesFromCache: (cfg)->
@@ -100,6 +106,32 @@ class Brex
       modules.push [cfg[i], groupsOfModules]
 
     return modules
+
+
+  loadModulesFromServer: (cfg, callback)->
+    modules = ctor.array()
+    async.eachSeries [1...cfg.length], (i, clbk)=>
+      groupsOfModules = ctor.array()
+
+      async.eachSeries cfg[i].l, (url, cb)=>
+        moduleKey = url
+        unless /^http(s)?:/i.test(url)
+          url = "#{@protocol}://#{@host}/#{@ptm}#{url}"
+
+        @talker.api.ajax.get {
+          url: url
+        }, (res)=>
+          if res.err
+            @talker.api.localStorage.set moduleKey, "(function(){})()"
+            return cb()
+
+          @talker.api.localStorage.set moduleKey, res.value
+          cb()
+      , (e)->
+        clbk()
+    , (e)=>
+      @config.modules = @getModulesFromCache(cfg)
+      callback()
 
 
 module.exports = Brex
