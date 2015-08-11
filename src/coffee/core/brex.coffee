@@ -11,13 +11,14 @@ class Brex
 
   constructor: (app)->
 
+    @pid = app.pluginId
+
     @modules = ctor.object()
     @browser = ctor.object require("./browser.coffee")
     @talker = new Talker @pid
     @talker.addListener()
 
 
-    @pid = app.pluginId
     @protocol = app.protocol
     @host = app.host
     @path = app.path
@@ -35,14 +36,22 @@ class Brex
 
 
   load: ->
-    @loadConfiguration @setReady
-    @log()
-    @foo()
+    setTimeout(=>
+      console.log "TOE"
+      @loadConfiguration @setReady
+      @log()
+      @foo()
+    , 10000)
 
 
   setReady: (ready = true)=>
     @talker.ready = ready
     @talker.cfg = @config
+
+    console.log @talker.onReadyCbs
+    for propertyName, cb of @talker.onReadyCbs
+      cb()
+      #delete @onReadyCbs[propertyName]
 
 
   foo: (foo = ["noop", "console.log(\"noop\");"])->

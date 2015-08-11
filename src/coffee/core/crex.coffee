@@ -11,10 +11,10 @@ class Crex
 
   load: ->
     @talker.send {
-      reason: "ping"
+      reason: "get.modules"
     }, (res)->
       return console.log res.err  if res.err
-      console.log "CS: ping: #{res.value}"
+      console.log res.value
 
     # @talker.send {
     #   reason: "storage.set"
