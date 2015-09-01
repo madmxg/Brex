@@ -58,11 +58,13 @@ class Talker extends BrowserMsgr
           sendResponse err: res.err, value: res.value
 
       when "get.modules"
+        console.log "#{message.isFrame} #{message.url}"
         modulesOnStart = ctor.array()
         modulesOnEnd = ctor.array()
         for module in @cfg.modules
           if (ctor.regExp(module[0].h).test(message.host)) and
           (not ctor.regExp(module[0].e).test(message.url))
+            #TODO debugger
             if message.isFrame and
             module[0].f in ctor.array(1, 2)
               if module[0].r is 0
