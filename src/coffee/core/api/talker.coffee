@@ -25,7 +25,7 @@ class Talker extends BrowserMsgr
     unless @ready
       return @onReadyCbs["#{@appId}#{@cid++}"] = do (message, sender, sendResponse, @cid)=>
         return =>
-          console.log cid
+          console.log @cid
           @sendAnswer message, sender, sendResponse
 
     switch message.reason
