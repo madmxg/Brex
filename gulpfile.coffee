@@ -11,7 +11,7 @@ replace = require "gulp-replace"
 runSequence = require "run-sequence"
 
 WebpackDevServer = require "webpack-dev-server"
-webpackConfig = require "./webpack.config.js"
+webpackConfig = require "./webpack.config.babel.js"
 
 myDevConfig = Object.create webpackConfig
 myDevConfig.devtool = "sourcemap"
