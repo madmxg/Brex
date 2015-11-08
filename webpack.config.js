@@ -12,8 +12,8 @@ const envPlugin = new webpack.DefinePlugin({
 module.exports = {
   context: path.join(__dirname + '/src'),
   entry: {
-    bg: './coffee/bg/chrome.js',
-    cs: './coffee/cs/chrome.js'
+    bg: './modules/bg/chrome.js',
+    cs: './modules/cs/chrome.js'
   },
   output: {
     path: path.join(__dirname + '/build'),

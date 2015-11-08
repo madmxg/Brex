@@ -1,18 +1,18 @@
 import promise from 'es6-promise';
-promise.polyfill();
+// promise.polyfill();
 import fetch from 'isomorphic-fetch';
 
 export default {
-  __send: function(err, value, cb) {
-    let response = {
+  __sendBack: function(err, value, cb) {
+    cb({
       err: err,
       value: value
-    }
-    cb(response);
+    });
   },
   get: function(param, cb) {
+    console.log(cb);
     param.method = 'get';
-    this.ajax(param, cb);
+    return this.ajax(param, cb);
   },
   post: function (param, cb) {
     param.method = 'post';
@@ -30,12 +30,14 @@ export default {
     let headers = param.headers || {};
     let mode = param.mode || 'no-cors';
     let credentials = param.credentials || 'omit';
-    let cache = param.cache || 'default'
-    let redirect = param.redirect || 'follow'
+    let cache = param.cache || 'default';
+    let redirect = param.redirect || 'follow';
+
+    let parse = param.parse || 'text'; // json|text|res
 
 
 
-    let req = fetch(url, {
+    fetch(url, {
       method: method
       // body: body,
       // headers: headers,
@@ -43,13 +45,25 @@ export default {
       // credentials: credentials,
       // cache: cache,
       // redirect: redirect
-    });
-
-    req.then((response) =>
-      this.__send(null, response, cb)
-    );
-    req.catch((err) =>
-      this.__send(err, null, cb)
-    );
+    })
+      .then((response) => {
+        switch (parse) {
+        case 'json':
+          return response.json();
+          break;
+        case 'text':
+          return response.text();
+          break;
+        case 'text':
+        default:
+          return response;
+        }
+      })
+      .then((data) => {
+        this.__sendBack(null, data, cb)
+      })
+      .catch((err) => {
+        this.__sendBack(err, null, cb);
+      });
   }
 }
