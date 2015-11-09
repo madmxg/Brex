@@ -58,7 +58,7 @@ export default class Brex {
     if (this.config.ttl > ctor.number(helper.getCurrentTime())) {
       return cb();
     }
-    this.loadConfigurationFromServer(cb);
+    this.loadConfigurationFromServer(cb.bind(this));
   }
 
 
@@ -67,12 +67,11 @@ export default class Brex {
       url: `${this.protocol}:\/\/${this.host}/${this.ptc}`,
       parse: 'json'
     }, (res)=> {
-      console.log(res);
       if (res.err) {
         this.config.ttl = ctor.number(helper.getCurrentTime() + this.errTimeout);
         this.talker.api.localStorage.set(`${this.pid}ttl`, ctor.string(this.config.ttl));
 
-        return cb.bind(this)(false);
+        return cb(false);
       }
 
       let newConfiguration = res.value;
@@ -81,22 +80,20 @@ export default class Brex {
         this.config.ttl = ctor.number(helper.getCurrentTime() + this.errTimeout);
         this.talker.api.localStorage.set(`${this.pid}ttl`, ctor.string(this.config.ttl));
 
-        return cb.bind(this)();
+        return cb();
       }
 
       let newConfigurationVersion = newConfiguration[0].v;
 
       if (newConfigurationVersion !== this.config.version) {
-        debugger;
         let ttl = ctor.string(helper.getCurrentTime() + this.timeout);
         this.talker.api.localStorage.set(`${this.pid}ttl`, ttl);
         this.talker.api.localStorage.set(`${this.pid}cfg`, res.value);
 
         this.config = this.getConfigurationFromCache(false);
-        return this.loadModulesFromServer(newConfiguration, cb.bind(this));
+        return this.loadModulesFromServer(newConfiguration, cb);
       }
-      console.log(2);
-      return cb.bind(this)();
+      return cb();
     })
   }
 
@@ -121,4 +118,12 @@ export default class Brex {
       modules: []
     }
   }
-}
+
+  loadModulesFromServer (cfg, cb) {
+    let [key, ...modules ]= cfg;
+    console.log('key', key);
+    console.log('modules', modules);
+    cb();
+
+  }
+};
