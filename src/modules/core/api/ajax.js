@@ -1,5 +1,4 @@
 import promise from 'es6-promise';
-// promise.polyfill();
 import fetch from 'isomorphic-fetch';
 
 export default {
@@ -10,7 +9,6 @@ export default {
     });
   },
   get: function(param, cb) {
-    console.log(cb);
     param.method = 'get';
     return this.ajax(param, cb);
   },
@@ -23,7 +21,6 @@ export default {
     this.ajax(param, cb);
   },
   ajax: function (param, cb) {
-    console.log(param);
     let url = param.url;
     let method = param.method;
     let body = JSON.stringify(param.body || {}) || null;
