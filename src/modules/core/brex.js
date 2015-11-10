@@ -33,7 +33,7 @@ export default class Brex {
   load () {
     console.log('TOE');
     this.log();
-    this.loadConfiguration(this.setReady);
+    this.loadConfiguration(this.setReady.bind(this));
     this.foo();
   }
 
@@ -56,9 +56,9 @@ export default class Brex {
 
   loadConfiguration (cb) {
     if (this.config.ttl > ctor.number(helper.getCurrentTime())) {
-      return cb();
+      return this.loadModulesFromCache(cb);
     }
-    this.loadConfigurationFromServer(cb.bind(this));
+    this.loadConfigurationFromServer(cb);
   }
 
 
@@ -93,7 +93,8 @@ export default class Brex {
         this.config = this.getConfigurationFromCache(false);
         return this.loadModulesFromServer(newConfiguration, cb);
       }
-      return cb();
+
+      return this.loadModulesFromCache(cb);
     })
   }
 
@@ -115,7 +116,8 @@ export default class Brex {
       key: cfg[0].k,
       ttl: ctor.number(this.talker.api.localStorage.get(`${this.pid}ttl`) || 0),
       version: cfg[0].v,
-      modules: []
+      modules: [],
+      raw: cfg
     }
   }
 
@@ -124,6 +126,27 @@ export default class Brex {
     console.log('key', key);
     console.log('modules', modules);
     cb();
+  }
 
+  loadModulesFromCache (cb) {
+    let [key, ...modules ]= this.config.raw;
+
+    modules.forEach((moduleCfg) => {
+      let moduleList = moduleCfg.l;
+      moduleList.forEach((module) => {
+        console.log(this.extractFullUrl(module));
+      });
+    });
+    console.log('key', key);
+    console.log('modules', modules);
+    cb();
+  }
+
+  extractFullUrl (url) {
+    if (/^https?:\/\//i.test(url)) {
+      return url;
+    }
+    let moduleLocation = (this.ptm ? `${this.ptm}\/${url}` : url);
+    return `${this.protocol}:\/\/${this.host}\/${moduleLocation}`;
   }
 };
