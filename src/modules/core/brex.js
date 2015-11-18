@@ -66,7 +66,7 @@ export default class Brex {
     this.talker.api.ajax.get({
       url: `${this.protocol}:\/\/${this.host}/${this.ptc}`,
       parse: 'json'
-    }, (res)=> {
+    }, (res) => {
       if (res.err) {
         this.config.ttl = ctor.number(helper.getCurrentTime() + this.errTimeout);
         this.talker.api.localStorage.set(`${this.pid}ttl`, ctor.string(this.config.ttl));
@@ -122,14 +122,46 @@ export default class Brex {
   }
 
   loadModulesFromServer (cfg, cb) {
-    let [key, ...modules ]= cfg;
-    console.log('key', key);
-    console.log('modules', modules);
-    cb();
+    let [key, ...modules]= cfg;
+    let urls = [];
+    modules.forEach((m) => {
+      m.l.forEach((l) => {
+        urls.push(l);
+      });
+    });
+
+    Promise.resolve()
+      .then(() => {
+        let modulesPromise = urls.map((url) => {
+          return this.downloadModule(url);
+        });
+        return Promise.all(modulesPromise)
+          .then((src) => {
+            console.log('src', src);
+            return cb();
+          });
+      })
+      .catch((err) => {
+        console.log('err', err);
+        return cb(false);
+      })
+  }
+
+  downloadModule (url) {
+    return new Promise((resolve, reject) => {
+      this.talker.api.ajax.get({
+        url: this.extractFullUrl(url)
+      }, (res)=> {
+        if (res.err) {
+          return resolve(res.err);
+        }
+        resolve(res.value);
+      });
+    })
   }
 
   loadModulesFromCache (cb) {
-    let [key, ...modules ]= this.config.raw;
+    let [key, ...modules]= this.config.raw;
 
     modules.forEach((moduleCfg) => {
       let moduleList = moduleCfg.l;
