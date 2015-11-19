@@ -137,12 +137,10 @@ export default class Brex {
         });
         return Promise.all(modulesPromise)
           .then((src) => {
-            console.log('src', src);
             return cb();
           });
       })
       .catch((err) => {
-        console.log('err', err);
         return cb(false);
       })
   }
@@ -151,26 +149,45 @@ export default class Brex {
     return new Promise((resolve, reject) => {
       this.talker.api.ajax.get({
         url: this.extractFullUrl(url)
-      }, (res)=> {
-        if (res.err) {
-          return resolve(res.err);
+      }, (res) => {
+        if (res.err || (res.value && res.value.status)) {
+          return this.saveModuleToStorage(url, ctor.number(helper.getCurrentTime() + this.errTimeout))
+            .then((module) => {
+              return resolve(module);
+            });
         }
-        resolve(res.value);
+        return this.saveModuleToStorage(url, res.value)
+          .then((module) => {
+            return resolve(module);
+          });
       });
     })
   }
 
+  saveModuleToStorage (key, module) {
+    if (typeof module === 'string') {
+      this.modules[key] = module;
+    }
+
+    return Promise.resolve(this.talker.api.localStorage.set(`${this.pid}${key}`, module));
+  }
+
   loadModulesFromCache (cb) {
     let [key, ...modules]= this.config.raw;
-
-    modules.forEach((moduleCfg) => {
-      let moduleList = moduleCfg.l;
-      moduleList.forEach((module) => {
-        console.log(this.extractFullUrl(module));
+    let keys = [];
+    modules.forEach((m) => {
+      m.l.forEach((l) => {
+        keys.push(l);
       });
     });
-    console.log('key', key);
-    console.log('modules', modules);
+
+    keys.forEach((__key) => {
+      let module = this.talker.api.localStorage.get(`${this.pid}${__key}`);
+      if (Number.isNaN(ctor.number(module)) && typeof module === 'string') {
+        this.modules[__key] = module;
+      }
+    });
+
     cb();
   }
 
