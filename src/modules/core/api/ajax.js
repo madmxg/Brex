@@ -44,6 +44,10 @@ export default {
       // redirect: redirect
     })
       .then((response) => {
+        if (response.status !== 200) {
+          return response;
+        }
+
         switch (parse) {
         case 'json':
           return response.json();
@@ -51,9 +55,10 @@ export default {
         case 'text':
           return response.text();
           break;
-        case 'text':
+        // case 'text':
         default:
           return response;
+          break;
         }
       })
       .then((data) => {
