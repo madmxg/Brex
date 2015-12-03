@@ -4,7 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "dependencies": {
-    "async": "^1.4.0",
+    "debug": "^2.2.0",
     "es6-promise": "^3.0.2",
     "isomorphic-fetch": "^2.1.1",
     "jquery": "^2.1.4"

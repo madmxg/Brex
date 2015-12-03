@@ -1,4 +1,4 @@
-class Abra {
+export defaultclass Abra {
   constructor (w) {
     this.w = w;
 
@@ -8,6 +8,3 @@ class Abra {
     alert(this.w);
   }
 }
-
-
-export default Abra;

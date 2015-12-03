@@ -1,17 +1,33 @@
-class ChromeMsgr {
+import debug from 'debug';
+
+import logSeed from './logSeed';
+
+
+
+
+
+const log = debug(`Brex:chromeMsgr:${logSeed}`);
+
+export default class ChromeMsgr {
   constructor (appId) {
+    log('constructor', appId);
+
     this.appId = appId;
   }
 
   addListener () {
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>
+    log('addListener');
+
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      log('addListener onMsg', message, sender);
+
       this.sendAnswer(message, this.appId, sendResponse)
-    );
+    });
   }
 
   send (msg, cb) {
+    log('send', msg);
+
     chrome.runtime.sendMessage(null, msg, null, cb);
   }
 }
-
-export default ChromeMsgr;

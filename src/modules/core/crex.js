@@ -1,24 +1,41 @@
+import debug from 'debug';
+
 import ctor from './constructor';
 import Talker from './api/talker';
+
+
+
+
+const log = debug(`Brex:crex:${window.location.hostname}`);
 
 export default class Crex {
 
   constructor (app) {
+    log('constructor');
+
     this.pid = app.pluginId;
     this.modules = ctor.object();
     this.talker = new Talker(this.pid);
   }
 
   load () {
+    log('load');
+
     this.loadModules(this.proceed);
   }
 
 
   loadModules (cb) {
+    log('loadModules');
+
     this.talker.send({
       reason:'get.modules'
     }, function (res) {
+      log('loadModules res', res);
+
       if (res.err) {
+        log('loadModules res err', res.err);
+
         return cb();
       }
       cb(res.value);
@@ -26,15 +43,18 @@ export default class Crex {
   }
 
   proceed (data) {
-    console.log(`frame ${window !== top}`, data);
-    var s = data[0];
-    var e = data[1];
+    log(`proceed frame ${window !== top}`, data);
 
-    this.addWithLoop(s);
+    if (data && data.length) {
+      var s = data[0];
+      var e = data[1];
 
-    setTimeout(() => {
-      this.addWithLoop(e)
-    }, 5000);
+      this.addWithLoop(s);
+
+      setTimeout(() => {
+        this.addWithLoop(e)
+      }, 5000);
+    }
   }
 
   addWithLoop (o) {

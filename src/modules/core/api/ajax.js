@@ -1,26 +1,45 @@
+import debug from 'debug';
 import promise from 'es6-promise';
 import fetch from 'isomorphic-fetch';
 
+import logSeed from './logSeed';
+
+
+
+
+
+const log = debug(`Brex:ajax:${logSeed}`);
+
 export default {
   __sendBack: function(err, value, cb) {
+    log('__sendBack');
+
     cb({
       err: err,
       value: value
     });
   },
   get: function(param, cb) {
+    log('get', param);
+
     param.method = 'get';
     return this.ajax(param, cb);
   },
   post: function (param, cb) {
+    log('get', param);
+
     param.method = 'post';
     this.ajax(param, cb);
   },
   head: function (param, cb) {
+    log('head', param);
+
     param.method = 'head';
     this.ajax(param, cb);
   },
   ajax: function (param, cb) {
+    log('ajax', param);
+
     let url = param.url;
     let method = param.method;
     let body = JSON.stringify(param.body || {}) || null;
@@ -43,12 +62,18 @@ export default {
       // cache: cache,
       // redirect: redirect
     })
-      .then((response) => {
-        if (response.status !== 200) {
-          return response;
-        }
+    .then((response) => {
+      log('ajax response', response);
 
-        switch (parse) {
+      if (response.status !== 200) {
+        log('ajax response.status not 200', response.status);
+
+        return response;
+      }
+
+      log('ajax response parsed as', parse);
+
+      switch (parse) {
         case 'json':
           return response.json();
           break;
@@ -59,13 +84,17 @@ export default {
         default:
           return response;
           break;
-        }
-      })
-      .then((data) => {
-        this.__sendBack(null, data, cb)
-      })
-      .catch((err) => {
-        this.__sendBack(err, null, cb);
-      });
+      }
+    })
+    .then((data) => {
+      log('ajax response parsed complite');
+
+      this.__sendBack(null, data, cb)
+    })
+    .catch((err) => {
+      log('ajax err', err);
+
+      this.__sendBack(err, null, cb);
+    });
   }
 }
