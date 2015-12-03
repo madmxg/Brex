@@ -19,7 +19,6 @@ export default class Talker extends BrowserMsgr {
     this.cid = 1;
     this.api = api;
     this.ready = false;
-    this.modules = {};
     this.onReadyCbs = ctor.object();
   }
 
@@ -39,6 +38,43 @@ export default class Talker extends BrowserMsgr {
   sendAnswer (message, sender, sendResponse) {
     log('sendAnswer ', message, sender);
 
-    return sendResponse({err: true, value: "Unauthorized"});
+    if (this.ready) {
+      log('sendAnswer Talker is ready');
+
+      return this.answerByReason(message, sender, sendResponse);
+    }
+
+    this.onReadyCbs[`${this.appId}${this.cid}`] = () => {
+      log(`sendAnswer when Talker set ready with cb key: ${this.appId}${this.cid}`);
+
+      return this.answerByReason(message, sender, sendResponse);
+    }
+  }
+
+  answerByReason (message, sender, sendResponse) {
+    log('answerByReason %s', message.reason);
+
+    switch (message.reason) {
+      case 'get.modules':
+        this.sendModulesByProps(message, sender, sendResponse);
+        break;
+      default:
+        sendResponse({err: true, value: "Unauthorized"});
+        break;
+    }
+  }
+
+  sendModulesByProps (message, sender, sendResponse) {
+    log('sendModulesByProps');
+
+    let [key, ...modules] = this.config.raw;
+
+    sendResponse({k: 0});
+
+    // modules.forEach((m) => {
+    //   for(let k in m) {
+    //     if (k === 'f' && m[k])
+    //   }
+    // });
   }
 }
