@@ -10,7 +10,8 @@
     "r": 1,
     "h": ".+",
     "e": "ya\\.ru",
-    "i": 0,
+    "a": 0,
+    "i": "",
     "l": [
       "http://code.jquery.com/jquery-2.1.4.min.js",
       "ember.js",
@@ -23,7 +24,8 @@
     "r": 1,
     "h": "ya\\.ru|yandex\\.ru",
     "e": "",
-    "i": 2,
+    "a": 2,
+    "i": "",
     "l": [
       "dfkgjj.js",
       "ggg.js",
