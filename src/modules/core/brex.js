@@ -45,6 +45,7 @@ export default class Brex {
 
     this.talker.ready = ready;
     this.talker.cfg = this.config;
+    this.talker.modules = this.modules;
 
     for (propName in this.talker.onReadyCbs) {
       this.talker.onReadyCbs[propName]();
