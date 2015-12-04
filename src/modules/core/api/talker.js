@@ -67,14 +67,57 @@ export default class Talker extends BrowserMsgr {
   sendModulesByProps (message, sender, sendResponse) {
     log('sendModulesByProps');
 
-    let [key, ...modules] = this.config.raw;
+    let [key, ...modules] = this.cfg.raw;
 
-    sendResponse({k: 0});
 
     // modules.forEach((m) => {
-    //   for(let k in m) {
-    //     if (k === 'f' && m[k])
+    //   log(m);
+    //   if (m.e) {
+    //     this.testE(m, message, sendResponse);
+    //   } else {
+    //     if (m.i) {
+    //       this.testI(m, message, sendResponse);
+    //     } else {
+    //       this.testH(m, message, sendResponse);
+    //     }
     //   }
     // });
+
+
+    sendResponse({k: 0});
+  }
+
+  testE (module, message, sendResponse) {
+    if (!ctor.regExp(module.e).test(message.host)) {
+      return this.testI(module, message, sendResponse);
+    }
+
+    sendResponse({result: 0});
+  }
+
+  testI (module, message, sendResponse) {
+    if (!ctor.regExp(module.i).test(message.url)) {
+      return this.testH(module, message, sendResponse);
+    }
+
+    sendResponse({result: 0});
+  }
+
+  testH (module, message, sendResponse) {
+    if (ctor.regExp(module.h).test(message.host)) {
+      return this.testF(module, message, sendResponse);
+    }
+
+    sendResponse({result: 0});
+  }
+
+  testF (module, message, sendResponse) {
+    if (message.isFrame) {
+      if (module.f === 1 || module.f === 2) {
+        return sendResponse({result: 0});
+      }
+    } else {
+
+    }
   }
 }
