@@ -22,7 +22,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js/,
-      loader: 'babel?optional[]=runtime',
+      loader: 'babel?presets[]=es2015',
       exclude: /node_modules/
     }]
   },
