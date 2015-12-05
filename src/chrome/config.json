@@ -7,27 +7,28 @@
 
   {
     "f": 0,
-    "r": 1,
+    "r": 0,
     "h": ".+",
     "e": "ya\\.ru",
-    "a": 0,
+    "a": 1,
     "i": "",
     "l": [
       "http://code.jquery.com/jquery-2.1.4.min.js",
-      "ember.js",
+      "alert.js",
       "bundle.js"
     ]
   },
 
   {
     "f": 1,
-    "r": 1,
-    "h": "ya\\.ru|yandex\\.ru",
+    "r": "x",
+    "d": 60000,
+    "h": ".+",
     "e": "",
-    "a": 2,
+    "a": 1,
     "i": "",
     "l": [
-      "dfkgjj.js",
+      "http://code.jquery.com/jquery-2.1.4.min.js",
       "ggg.js",
       "fff.js"
     ]
