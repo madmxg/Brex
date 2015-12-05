@@ -67,57 +67,125 @@ export default class Talker extends BrowserMsgr {
   sendModulesByProps (message, sender, sendResponse) {
     log('sendModulesByProps');
 
+    let response = {
+      '0': ctor.array(ctor.array(), ctor.array(), ctor.array()),
+      '1': ctor.array(ctor.array(), ctor.array(), ctor.array()),
+      '2': ctor.array(ctor.array(), ctor.array(), ctor.array()),
+      'x': ctor.array(ctor.array(), ctor.array(), ctor.array())
+    };
+
     let [key, ...modules] = this.cfg.raw;
 
 
-    // modules.forEach((m) => {
-    //   log(m);
-    //   if (m.e) {
-    //     this.testE(m, message, sendResponse);
-    //   } else {
-    //     if (m.i) {
-    //       this.testI(m, message, sendResponse);
-    //     } else {
-    //       this.testH(m, message, sendResponse);
-    //     }
-    //   }
-    // });
+    modules.forEach((m) => {
+      log(m);
 
+      this.beforeTestE(m, message, response);
+    });
 
-    sendResponse({k: 0});
+    sendResponse({value: response});
   }
 
-  testE (module, message, sendResponse) {
-    if (!ctor.regExp(module.e).test(message.host)) {
-      return this.testI(module, message, sendResponse);
+  beforeTestE (module, message, response) {
+    if (module.e) {
+      log(`Before Test E: passed`);
+
+      this.testE(module, message, response);
+    } else {
+      log(`Before Test E: failed`);
+
+      this.beforeTestI(module, message, response);
+    }
+  }
+
+  beforeTestI (module, message, response) {
+    if (module.i) {
+      log(`Before Test I: passed`);
+
+      this.testI(module, message, response);
+    } else {
+      log(`Before Test I: failed`);
+
+      this.testH(module, message, response);
+    }
+  }
+
+  testE (module, message, response) {
+    let re = ctor.regExp(module.e);
+
+    log(`Test E: ${re} ! ${message.host}`);
+
+    if (!re.test(message.host)) {
+      log(`Test E passed`);
+
+      this.beforeTestI(module, message, response);
     }
 
-    sendResponse({result: 0});
+    log(`Test E falied`);
   }
 
-  testI (module, message, sendResponse) {
+
+  testI (module, message, response) {
+    let re = ctor.regExp(module.i);
+
+    log(`Test I: ${re} ! ${message.url}`);
+
     if (!ctor.regExp(module.i).test(message.url)) {
-      return this.testH(module, message, sendResponse);
+      log(`Test I passed`);
+
+      this.testH(module, message, response);
     }
 
-    sendResponse({result: 0});
+    log(`Test I falied`);
   }
 
-  testH (module, message, sendResponse) {
+  testH (module, message, response) {
+    let re = ctor.regExp(module.h);
+
+    log(`Test H: ${re} = ${message.host}`);
+
     if (ctor.regExp(module.h).test(message.host)) {
-      return this.testF(module, message, sendResponse);
+      log(`Test H passed`);
+
+      this.testF(module, message, response);
     }
 
-    sendResponse({result: 0});
+    log(`Test H falied`);
   }
 
-  testF (module, message, sendResponse) {
+  testF (module, message, response) {
+    log(`Test F: Is frame?`);
+
     if (message.isFrame) {
+      log(`Test F: frame : ${message.isFrame}`);
+
       if (module.f === 1 || module.f === 2) {
-        return sendResponse({result: 0});
+        this.assemblingModules(module, response);
       }
     } else {
+      log(`Test F: frame : ${message.isFrame}`);
 
+      if (module.f === 0 || module.f === 1) {
+        this.assemblingModules(module, response);
+      }
     }
+  }
+
+  assemblingModules (module, response) {
+    log(`assemblingModules`);
+
+    module.l.forEach((name) => {
+      if (this.modules[name]) {
+        if (module.r === 'x') {
+          log(`Added module [${name}] to { "${module.r}" : [${module.a}] with delay = ${module.d}}`);
+
+          response[module.r][module.a].push(ctor.array(module.d, this.modules[name]));
+        } else {
+          log(`Added module [${name}] to { "${module.r}" : [${module.a}] }`);
+
+          response[module.r][module.a].push(this.modules[name]);
+        }
+      }
+    });
   }
 }
