@@ -29,7 +29,7 @@ export default class Crex {
     log('loadModules');
 
     this.talker.send({
-      reason:'get.modules'
+      reason: 'get.modules'
     }, function (res) {
       log('loadModules res', res);
 
