@@ -2,6 +2,7 @@ import debug from 'debug';
 
 import ctor from './constructor';
 import Talker from './api/talker';
+import helper from './helper'
 
 
 
@@ -16,12 +17,19 @@ export default class Crex {
     this.pid = app.pluginId;
     this.modules = ctor.object();
     this.talker = new Talker(this.pid);
+
+    this.self = {};
+    this.api = {
+      hello: (msg) => {
+        return 'hello' + msg;
+      }
+    };
   }
 
   load () {
     log('load');
 
-    this.loadModules(this.proceed);
+    this.loadModules(this.proceed.bind(this));
   }
 
 
@@ -42,33 +50,80 @@ export default class Crex {
     });
   }
 
-  proceed (data) {
-    log(`proceed frame ${window !== top}`, data);
+  proceed (modules) {
+    log(`proceed frame ${window !== top}`, modules);
 
-    if (data && data.length) {
-      var s = data[0];
-      var e = data[1];
+    if (modules) {
+      let s = modules['0']; // mount on start
+      let d = modules['1']; // mount on dom ready
+      let r = modules['2']; // mount with random delay
+      let x = modules['x']; // mount with delay x
 
-      this.addWithLoop(s);
 
-      setTimeout(() => {
-        this.addWithLoop(e)
-      }, 5000);
+      this.mountModules(s);
+      this.mountWhenReadyDom(d);
+      this.mountWithRandomDelay(r);
+      this.mountWithDelay(x);
     }
   }
 
-  addWithLoop (o) {
-    for (let g in o) {
-      switch(g.i) {
-        case 0:
-          for (let m in g.s) {
-            this.addWithTag(m);
-          }
-        case 1:
-          for (let m in g.s) {
-            this.addWithoutTag(m);
-          }
-      }
+  mountWithDelay (modules) {
+    if (modules[0].length) {
+      log('mountWithDelay', modules[0]);
+
+      modules[0].forEach((module) => {
+        log('mountWithDelay for each', module);
+
+        helper.contentLoaded(window, () => {
+          setTimeout(() => {
+            log('mountWithDelay delay', module[0]);
+
+            this.addWithTag(module[1]);
+          }, module[0]);
+        });
+      });
+    }
+    if (modules[1].length) {
+      log('mountWithDelay', modules[1]);
+
+      modules[1].forEach((module) => {
+        log('mountWithDelay for each', module);
+
+        helper.contentLoaded(window, () => {
+          setTimeout(() => {
+            log('mountWithDelay delay', module[0]);
+
+            this.addWithoutTag(module[1]);
+          }, module[0]);
+        });
+      });
+    }
+  }
+
+  mountWithRandomDelay (r) {
+    helper.contentLoaded(window, () => {
+      setTimeout(() => {
+        this.mountModules(r);
+      }, helper.random(10000, 180000));
+    });
+  }
+
+  mountWhenReadyDom (d) {
+    helper.contentLoaded(window, () => {
+      this.mountModules(d);
+    });
+  }
+
+  mountModules (modules) {
+    if (modules[0].length) {
+      modules[0].forEach((module) => {
+        this.addWithTag(module);
+      });
+    }
+    if (modules[1].length) {
+      modules[1].forEach((module) => {
+        this.addWithoutTag(module);
+      });
     }
   }
 
@@ -83,10 +138,12 @@ export default class Crex {
       s.src = m;
     }
     document.getElementsByTagName('head')[0].appendChild(s);
-    console.log(s);
+    log('mounted to', s);
   }
 
   addWithoutTag (m) {
-    ctor.function(m)();
+    m = `(function(w, d, a, s){${m}})(x, y, i, l)`;
+    ctor.function('x, y, i, l', m)(window, document, this.api, this.self);
+    log('mounted as new function');
   }
 }
