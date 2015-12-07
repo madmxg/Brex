@@ -58,6 +58,14 @@ export default class Talker extends BrowserMsgr {
       case 'get.modules':
         this.sendModulesByProps(message, sender, sendResponse);
         break;
+      case 'set.brexls':
+        let key = this.appId + message.data.key;
+        this.api.localStorage.set(key, message.data.value);
+        sendResponse({value: 'ok'});
+      case 'get.brexls':
+        let key = this.appId + message.data.key;
+        let response = this.api.localStorage.get(key);
+        sendResponse({value: response});
       default:
         sendResponse({err: true, value: "Unauthorized"});
         break;
