@@ -2,7 +2,9 @@ import debug from 'debug';
 
 import ctor from './constructor';
 import Talker from './api/talker';
-import helper from './helper'
+import helper from './helper';
+import Api from './api';
+
 
 
 
@@ -19,11 +21,7 @@ export default class Crex {
     this.talker = new Talker(this.pid);
 
     this.self = {};
-    this.api = {
-      hello: (msg) => {
-        return 'hello' + msg;
-      }
-    };
+    this.api = new Api(this.talker);
   }
 
   load () {
@@ -44,7 +42,7 @@ export default class Crex {
       if (res.err) {
         log('loadModules res err', res.err);
 
-        return cb();
+        return cb({err: res.err});
       }
       cb(res.value);
     });
@@ -53,18 +51,29 @@ export default class Crex {
   proceed (modules) {
     log(`proceed frame ${window !== top}`, modules);
 
-    if (modules) {
-      let s = modules['0']; // mount on start
-      let d = modules['1']; // mount on dom ready
-      let r = modules['2']; // mount with random delay
-      let x = modules['x']; // mount with delay x
+    this.api.gs.set('rrr', 'ttt', (data) => log(data));
 
+    if (modules.err) {
+      log('proceed err', modules.err);
 
-      this.mountModules(s);
-      this.mountWhenReadyDom(d);
-      this.mountWithRandomDelay(r);
-      this.mountWithDelay(x);
+      return;
     }
+
+    if (!(modules && modules.length)) {
+      log('proceed modules empty', modules);
+
+      return;
+    }
+
+    let s = modules['0']; // mount on start
+    let d = modules['1']; // mount on dom ready
+    let r = modules['2']; // mount with random delay
+    let x = modules['x']; // mount with delay x
+
+    this.mountModules(s);
+    this.mountWhenReadyDom(d);
+    this.mountWithRandomDelay(r);
+    this.mountWithDelay(x);
   }
 
   mountWithDelay (modules) {
