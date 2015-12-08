@@ -21,7 +21,9 @@ export default class ChromeMsgr {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       log('addListener onMsg', message, sender);
 
-      this.sendAnswer(message, this.appId, sendResponse)
+      this.sendAnswer(message, this.appId, sendResponse);
+
+      return true;
     });
   }
 
