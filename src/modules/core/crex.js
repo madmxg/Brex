@@ -51,7 +51,8 @@ export default class Crex {
   proceed (modules) {
     log(`proceed frame ${window !== top}`, modules);
 
-    this.api.gs.set('rrr', 'ttt', (data) => log(data));
+    this.api.gs.set('rrr', 'ttt', (data) => log('gs set ', data));
+    this.api.ajax.get({url: 'http://localhost:8080/manifest.json'}, (data) => log('get ajax', data));
 
     if (modules.err) {
       log('proceed err', modules.err);
@@ -59,7 +60,7 @@ export default class Crex {
       return;
     }
 
-    if (!(modules && modules.length)) {
+    if (!modules) {
       log('proceed modules empty', modules);
 
       return;
