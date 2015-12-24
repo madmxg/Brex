@@ -13,7 +13,8 @@ module.exports = {
   context: path.join(__dirname + '/src'),
   entry: {
     bg: './modules/bg/chrome.js',
-    cs: './modules/cs/chrome.js'
+    cs: './modules/cs/chrome.js',
+    module: './modules/BrexModule.js'
   },
   output: {
     path: path.join(__dirname + '/build'),

@@ -42,8 +42,8 @@ gulp.task "webpack:dev", (cb)->
 gulp.task "webpack:server", (cb)->
 
   new WebpackDevServer(webpack(myDevConfig), {
-    contentBase: "#{__dirname}/build"
-    publicPath: "/build"
+    contentBase: "#{__dirname}/src/public"
+    publicPath: "/brex"
     stats:
       colors: true
   }).listen 8080, "localhost", (err)->

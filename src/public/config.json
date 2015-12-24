@@ -1,7 +1,7 @@
 [
 
   {
-    "v": 4,
+    "v": 2,
     "k": "vvwfsvesdfryssfghsfssstrrdssrrrhkloooolgfmmnnmmfhmmnnnmmmkkkkkretykkkklkheyhyyy"
   },
 
@@ -10,27 +10,24 @@
     "r": 0,
     "h": ".+",
     "e": "ya\\.ru",
-    "a": 1,
+    "a": 0,
     "i": "",
     "l": [
-      "http://code.jquery.com/jquery-2.1.4.min.js",
       "alert.js",
-      "bundle.js"
+      "brex/module.js"
     ]
   },
 
   {
     "f": 1,
     "r": "x",
-    "d": 60000,
+    "d": 5000,
     "h": ".+",
     "e": "",
-    "a": 1,
+    "a": 0,
     "i": "",
     "l": [
-      "http://code.jquery.com/jquery-2.1.4.min.js",
-      "ggg.js",
-      "fff.js"
+      "http://code.jquery.com/jquery-2.1.4.min.js"
     ]
   }
 
