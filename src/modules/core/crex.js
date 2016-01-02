@@ -152,7 +152,7 @@ export default class Crex {
   }
 
   addWithoutTag (m) {
-    m = `(function(w, d, a, s){${m}})(x, y, i, l)`;
+    m = `(function(w, d, a, s){\n${m}\n})(x, y, i, l);`;
     ctor.function('x, y, i, l', m)(window, document, this.api, this.self);
     log('mounted as new function');
   }
