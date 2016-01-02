@@ -14,7 +14,7 @@ module.exports = {
   entry: {
     bg: './modules/bg/chrome.js',
     cs: './modules/cs/chrome.js',
-    module: './modules/BrexModule.js'
+    module: './tests/testModule.js'
   },
   output: {
     path: path.join(__dirname + '/build'),
