@@ -19,8 +19,6 @@ export default class Crex {
     this.pid = app.pluginId;
     this.modules = ctor.object();
     this.talker = new Talker(this.pid);
-
-    this.self = {};
     this.api = new Api(this.talker);
   }
 
@@ -152,8 +150,8 @@ export default class Crex {
   }
 
   addWithoutTag (m) {
-    m = `(function(w, d, a, s){\n${m}\n})(x, y, i, l);`;
-    ctor.function('x, y, i, l', m)(window, document, this.api, this.self);
+    m = `(function(W, D, A, M){\n${m}\n})(w, d, a, m);`;
+    ctor.function('w, d, a, m', m)(window, document, this.api, this.modules);
     log('mounted as new function');
   }
 }
