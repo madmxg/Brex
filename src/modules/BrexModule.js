@@ -1,17 +1,13 @@
 import debug from 'debug';
 
-
-
-
-
-const log = debug(`Brex:Module:${window.location.hostname}`);
-
 export default class BrexModule {
-
   constructor (app) {
-    log('constructor');
+    this.W = W;
+    this.D = D;
+    this.A = A;
+    this.M = M;
+
+    let mid = (this.A && this.A.talker && this.A.talker.appId) ? `${app.mid}:${this.A.talker.appId}` : app.mid;
+    this.log = debug(`Brex:Module:${mid}:${window.location.hostname}`);
   }
-
 }
-
-new BrexModule();
