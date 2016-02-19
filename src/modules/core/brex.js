@@ -25,6 +25,7 @@ export default class Brex {
     this.path = app.path;
     this.ptc = app.pathToConfig;
     this.ptm = app.pathToModule;
+    this.localModules = app.localModules || ctor.array();
     this.timeout = app.timeout;
     this.errTimeout = app.errTimeout;
 
@@ -111,6 +112,7 @@ export default class Brex {
       }
 
       let newConfigurationVersion = newConfiguration[0].v;
+      newConfiguration = newConfiguration.concat(this.localModules);
 
       log('loadConfigurationFromServer newConfigurationVersion %d', newConfigurationVersion);
 
@@ -119,7 +121,7 @@ export default class Brex {
 
         let ttl = ctor.string(helper.getCurrentTime() + this.timeout);
         this.talker.api.localStorage.set(`${this.pid}ttl`, ttl);
-        this.talker.api.localStorage.set(`${this.pid}cfg`, res.value);
+        this.talker.api.localStorage.set(`${this.pid}cfg`, newConfiguration);
 
         log('loadConfigurationFromServer set ttl', ttl);
 
@@ -149,9 +151,11 @@ export default class Brex {
     if(!storedParsedCfg) {
       log('getConfigurationFromCache started with default config');
 
-      storedParsedCfg = defaultCfg;
-      this.talker.api.localStorage.set(`${this.pid}cfg`, defaultCfg);
+      storedParsedCfg = defaultCfg.concat(this.localModules);
+      this.talker.api.localStorage.set(`${this.pid}cfg`, storedParsedCfg);
       this.talker.api.localStorage.set(`${this.pid}ttl`, 0);
+    } else {
+      storedParsedCfg = storedParsedCfg.concat(this.localModules);
     }
 
     let cfg = storedParsedCfg;
@@ -276,6 +280,10 @@ export default class Brex {
 
       return url;
     }
+    if (/^\//.test(url)) {
+      return chrome.extension.getURL(url);
+    }
+
     let moduleLocation = (this.ptm ? `${this.ptm}\/${url}` : url);
     let extracted = `${this.protocol}:\/\/${this.host}\/${moduleLocation}`;
 
