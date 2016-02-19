@@ -20,7 +20,7 @@ myDevConfig.debug = true
 webpackCompiler = webpack myDevConfig
 
 gulp.task "watch", ->
-  gulp.watch ["./src/coffee/**/*.coffee"], ["webpack:dev"]
+  gulp.watch ["./src/modules/**/*.js"], ["webpack:dev"]
   gulp.watch ["./src/chrome/*.json"], ["copy:extFiles"]
 
 
