@@ -1,14 +1,11 @@
 import debug from 'debug';
 import promise from 'es6-promise';
 import fetch from 'isomorphic-fetch';
-
 import logSeed from './logSeed';
 
 
-
-
-
 const log = debug(`Brex:ajax:${logSeed}`);
+
 
 export default {
   __sendBack: function(err, value, cb) {
@@ -97,4 +94,4 @@ export default {
       this.__sendBack(err, null, cb);
     });
   }
-}
+};

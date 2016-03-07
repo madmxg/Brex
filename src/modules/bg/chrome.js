@@ -1,11 +1,8 @@
-import debug from 'debug';
+import Logger from '../core/logger';
 import Brex from '../core/brex';
 
 
-
-
-
-const log = debug('Brex:bg');
+const log = new Logger('Brex:bg');
 
 
 if(chrome.runtime.onMessage) {

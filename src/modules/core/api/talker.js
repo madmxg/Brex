@@ -1,15 +1,12 @@
-import debug from 'debug';
-
+import Logger from '../logger';
 import BrowserMsgr from './chrome';
 import api from './chromeApi';
 import ctor from '../constructor';
 import logSeed from './logSeed';
 
 
+const log = new Logger(`Brex:talker:${logSeed}`);
 
-
-
-const log = debug(`Brex:talker:${logSeed}`);
 
 export default class Talker extends BrowserMsgr {
   constructor (appId) {
@@ -210,4 +207,4 @@ export default class Talker extends BrowserMsgr {
       }
     });
   }
-}
+};

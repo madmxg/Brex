@@ -1,15 +1,12 @@
-import debug from 'debug';
-
+import Logger from './logger';
 import ctor from './constructor';
 import Talker from './api/talker';
 import helper from './helper';
 import Api from './api';
 
 
+const log = new Logger(`Brex:crex:${window.location.hostname}`);
 
-
-
-const log = debug(`Brex:crex:${window.location.hostname}`);
 
 export default class Crex {
 
@@ -154,4 +151,4 @@ export default class Crex {
     ctor.function('w, d, a, m', m)(window, document, this.api, this.modules);
     log('mounted as new function');
   }
-}
+};

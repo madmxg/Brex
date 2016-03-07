@@ -1,12 +1,9 @@
-import debug from 'debug';
-
+import Logger from '../logger';
 import logSeed from './logSeed';
 
 
+const log = new Logger(`Brex:chromeMsgr:${logSeed}`);
 
-
-
-const log = debug(`Brex:chromeMsgr:${logSeed}`);
 
 export default class ChromeMsgr {
   constructor (appId) {
@@ -32,4 +29,4 @@ export default class ChromeMsgr {
 
     chrome.runtime.sendMessage(null, msg, null, cb);
   }
-}
+};

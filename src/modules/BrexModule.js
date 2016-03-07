@@ -1,4 +1,4 @@
-import debug from 'debug';
+import Logger from './core/logger';
 
 export default class BrexModule {
   constructor (app) {
@@ -8,6 +8,6 @@ export default class BrexModule {
     this.M = M;
 
     let mid = (this.A && this.A.talker && this.A.talker.appId) ? `${app.mid}:${this.A.talker.appId}` : app.mid;
-    this.log = debug(`Brex:Module:${mid}:${window.location.hostname}`);
+    this.log = new Logger(`Brex:Module:${mid}:${window.location.hostname}`);
   }
-}
+};

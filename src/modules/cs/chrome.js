@@ -1,11 +1,8 @@
-import debug from 'debug';
-
+import Logger from '../core/logger';
 import Crex from '../core/crex';
 
 
-
-
-const log = debug(`Brex:cs:${window.location.hostname}`);
+const log = new Logger(`Brex:cs:${window.location.hostname}`);
 
 
 if(chrome.runtime.onMessage) {

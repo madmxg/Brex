@@ -9,8 +9,9 @@ import logSeed from './logSeed';
 
 
 const log = debug(`Brex:chromeApi:${logSeed}`);
+let chromeApi;
 
-export default {
+export default chromeApi = {
   localStorage: {
     set: function (key, value) {
       log('localStorage set key: %s', key);
@@ -64,3 +65,5 @@ export default {
   },
   ajax: ajax
 }
+
+export let ls = chromeApi.localStorage;

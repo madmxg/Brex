@@ -1,10 +1,8 @@
-import debug from 'debug';
+import Logger from './logger';
 
 
+const log = new Logger(`Brex:Api:${window.location.hostname}`);
 
-
-
-const log = debug(`Brex:Api:${window.location.hostname}`);
 
 export default class Api {
 
@@ -85,4 +83,4 @@ export default class Api {
     });
   }
 
-}
+};

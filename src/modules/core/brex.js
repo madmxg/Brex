@@ -1,12 +1,10 @@
-import debug from 'debug';
-
-
+import Logger from './logger';
 import ctor from './constructor';
 import Talker from './api/talker';
 import helper from './helper';
 
 
-const log = debug('Brex:brex');
+const log = new Logger('Brex:brex');
 
 
 export default class Brex {
