@@ -31,7 +31,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --progress --watch --color"
+    "start": "webpack --progress --color"
   },
   "author": "Mikhail Garbuzov <madmxg@gmail.com>",
   "license": "ISC"
