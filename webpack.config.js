@@ -1,6 +1,6 @@
 'use strict';
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || 'production';
 
 const path = require('path');
 const webpack = require('webpack');
@@ -39,14 +39,14 @@ module.exports = {
     moduleTemplates: ['*-loader', '*'],
     extensions: ['', '.js']
   },
-  devtool: NODE_ENV == 'development' ? 'source-map' : null,
-  watch: NODE_ENV == 'development',
+  devtool: NODE_ENV === 'development' ? 'source-map' : null,
+  watch: NODE_ENV === 'development',
   watchOptions: {
     aggregateTimeout: 100
   }
 };
 
-if (NODE_ENV == 'production') {
+if (NODE_ENV === 'production') {
   module.exports.plugins.push(
       new webpack.optimize.UglifyJsPlugin({
         compress: {
