@@ -12,8 +12,8 @@ const envPlugin = new webpack.DefinePlugin({
 module.exports = {
   context: path.join(__dirname + '/src'),
   entry: {
-    bg: './modules/bg/chrome.js',
-    cs: './modules/cs/chrome.js',
+    bg: './modules/bg.js',
+    cs: './modules/cs.js',
     module: './tests/testModule.js'
   },
   output: {
@@ -23,8 +23,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js/,
-      loader: 'babel?presets[]=es2015',
-      exclude: /node_modules/
+      loader: 'babel?presets[]=es2015'
     }]
   },
   plugins: [

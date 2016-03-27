@@ -1,1 +1,0 @@
-export default (/\./.test(window.location.hostname) ? window.location.hostname : window.location.hostname === 'localhost' ? 'localhost' : 'bg');

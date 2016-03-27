@@ -1,9 +1,8 @@
-import Logger from '../core/logger';
-import Brex from '../core/brex';
+import Logger from 'bet-logger';
+import Brex from 'bet-bg';
 
 
 const log = new Logger('Brex:bg');
-
 
 if(chrome.runtime.onMessage) {
   log('bg script start');

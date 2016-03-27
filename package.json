@@ -1,14 +1,8 @@
 {
-  "name": "plug",
-  "version": "1.0.1",
-  "description": "",
+  "name": "brex",
+  "version": "0.0.1",
+  "description": "bet bootstrap",
   "main": "webpack.config.js",
-  "dependencies": {
-    "debug": "^2.2.0",
-    "es6-promise": "^3.0.2",
-    "isomorphic-fetch": "^2.1.1",
-    "jquery": "^2.1.4"
-  },
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-core": "^6.3.13",
@@ -34,5 +28,11 @@
     "start": "webpack --progress --color"
   },
   "author": "Mikhail Garbuzov <madmxg@gmail.com>",
-  "license": "ISC"
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "bet-bg": "latest",
+    "bet-cs": "latest",
+    "bet-logger": "latest",
+    "bet-module": "latest"
+  }
 }
